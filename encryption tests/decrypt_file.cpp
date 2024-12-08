@@ -4,7 +4,7 @@
 #include <fstream>
 
 #define AES_BLOCK_SIZE 16
-
+//g++ decrypt_file.cpp -o dec.exe -lssl -lcrypto
 int main(){
     int bytes_read;
     int bytes_written;
