@@ -13,7 +13,7 @@ void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* file
 
 int main(){
 
-    std::filesystem::path myPath = "dummy_directory";
+    std::filesystem::path myPath = "dummy_directory_1";
     std::string file;
 
     unsigned char key_chars[] = "Hard-coded key here.";
