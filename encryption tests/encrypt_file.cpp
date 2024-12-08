@@ -29,8 +29,6 @@ int main(){
             break;
         }
     }
-
-    EVP_EncryptFinal_ex(ctx, output_buffer + ciphertext_len, &ciphertext_len);
     EVP_CIPHER_CTX_free(ctx);
     fclose(infile_ptr);
     fclose(outfile_ptr);

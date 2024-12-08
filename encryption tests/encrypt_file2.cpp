@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
+#include <cstring>
 
 #define AES_BLOCK_SIZE 16
 
@@ -25,26 +26,19 @@ void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* file
     
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
     int len;
-    int ciphertext_len = 0;
     EVP_EncryptInit_ex(ctx, EVP_aes_128_cfb(), NULL, key_chars, iv);
 
     while(1){
+        long pos = ftell(file_ptr);
         bytes_read = fread(input_buffer, 1, AES_BLOCK_SIZE, file_ptr);
-        printf("input_buffer: ");
-        printArr(input_buffer);
         int status = EVP_EncryptUpdate(ctx, output_buffer, &len, input_buffer, bytes_read);
-        printf("status: ");
-        printf("%i\n", status);
-        ciphertext_len = ciphertext_len + len;
-        printf("output_buffer: ");
-        printArr(output_buffer);
-        fseek(file_ptr, -bytes_read, SEEK_CUR);
+        fseek(file_ptr, pos, SEEK_SET);
         fwrite(output_buffer, 1, bytes_read, file_ptr);
+        fseek(file_ptr, pos+bytes_read, SEEK_SET);
         if (bytes_read < AES_BLOCK_SIZE){
             break;
         }
     }
-    EVP_EncryptFinal_ex(ctx, output_buffer+ciphertext_len, &ciphertext_len);
     EVP_CIPHER_CTX_free(ctx);
     fclose(file_ptr);
 }

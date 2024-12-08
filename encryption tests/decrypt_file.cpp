@@ -12,7 +12,7 @@ int main(){
     unsigned char output_buffer[AES_BLOCK_SIZE];
     unsigned char key_chars[] = "Hard-coded key here.";
     unsigned char iv[] = "some random IV value";
-    FILE* infile_ptr = fopen("dummyfile.enc", "rb");
+    FILE* infile_ptr = fopen("dummyfile.txt", "rb");
     FILE* outfile_ptr = fopen("dummyfile2.txt", "wb");
 
     EVP_CIPHER_CTX *ctx = EVP_CIPHER_CTX_new();
@@ -30,7 +30,6 @@ int main(){
         }
     }
 
-    EVP_EncryptFinal_ex(ctx, output_buffer + plaintext_len, &plaintext_len);
     EVP_CIPHER_CTX_free(ctx);
     fclose(infile_ptr);
     fclose(outfile_ptr);
