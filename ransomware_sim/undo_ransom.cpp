@@ -13,7 +13,8 @@ void decryptFile(unsigned char key_chars[], unsigned char iv[], const char* file
 
 int main(){
 
-    std::filesystem::path myPath = "dummy_directory_1";
+    std::string target_dir = "dummy_directory_2";
+    std::filesystem::path myPath = target_dir;
     std::string file;
 
     unsigned char key_chars[] = "Hard-coded key here.";
@@ -60,3 +61,4 @@ void decryptFile(unsigned char key_chars[], unsigned char iv[], const char* file
     EVP_CIPHER_CTX_free(ctx);
     fclose(file_ptr);
 }
+
