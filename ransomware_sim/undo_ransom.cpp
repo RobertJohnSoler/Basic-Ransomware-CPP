@@ -1,7 +1,4 @@
 #include <openssl/evp.h>
-#include <stdio.h>
-#include <iostream>
-#include <fstream>
 #include <cstring>
 #include <filesystem>
 
@@ -13,7 +10,7 @@ void decryptFile(unsigned char key_chars[], unsigned char iv[], const char* file
 
 int main(){
 
-    std::string target_dir = "dummy_directory_2";
+    std::string target_dir = "dummy_directory_1";
     std::filesystem::path myPath = target_dir;
     std::string file;
 
@@ -34,6 +31,7 @@ int main(){
             std::filesystem::rename(oldName, newName);
         }
     }
+    return 0;
 }
 
 void decryptFile(unsigned char key_chars[], unsigned char iv[], const char* filename){

