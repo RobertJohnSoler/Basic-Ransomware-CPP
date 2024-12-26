@@ -8,14 +8,18 @@
 
 void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* filename);
 
+// code to test ecrypting an entire file with AES,
+// but this time it overwrites the original plaintext data (just like in ransomware)
+// uses evp.h, which is already up-to-date and secure
 int main(){
-    unsigned char key_chars[] = "Hard-coded key here.";
-    unsigned char iv[] = "some random IV value";
+    unsigned char key_chars[] = "Hard-coded key here.";     // AES encryption key
+    unsigned char iv[] = "some random IV value";            // AES initialization value
     printf("Encrypting... \n");
-    encryptFile(key_chars, iv, "dummyfile.txt");
+    encryptFile(key_chars, iv, "dummyfile.txt");             // open the input file (the file that WILL BE encrypted)
     return 0;
 }
 
+// function that encrypts a file given an encryption key and initialization value
 void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* filename){
     int bytes_read;
     int bytes_written;
@@ -27,6 +31,8 @@ void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* file
     int len;
     EVP_EncryptInit_ex(ctx, EVP_aes_128_cfb(), NULL, key_chars, iv);
 
+    // while loop that encrypts the file in groups of 16 bytes (since that is the block size for AES) until it reaches the EOF
+    // it reads 16 bytes of plaintext from the input file, encrypts it, then overwrites it with the result ciphertext
     while(1){
         long pos = ftell(file_ptr);
         bytes_read = fread(input_buffer, 1, AES_BLOCK_SIZE, file_ptr);
@@ -38,6 +44,6 @@ void encryptFile(unsigned char key_chars[], unsigned char iv[], const char* file
             break;
         }
     }
-    EVP_CIPHER_CTX_free(ctx);
-    fclose(file_ptr);
+    EVP_CIPHER_CTX_free(ctx);   // release the resources used when done
+    fclose(file_ptr);           // closes the file after use
 }
