@@ -10,7 +10,7 @@ Note that this repo should be used for educational purposes only. <strong>Using 
 
 ## Ransomware Simulation
 
-All the code for the ransomware simulation is located in `/ransomware_sim`. In there, the directory `/dummy_directory_1` is the target directory that the ransomware will encrypt. It's hard coded into the C++ code, so if you want to change the target directory's name or use the ransomware on a different folder, you'll have to change the code in this line: `unsigned char key_chars[] = "Hard-coded key here."`. Here's the different kinds of executable code vital for the simulation: </br>
+All the code for the ransomware simulation is located in `/ransomware_sim`. In there, the directory `/dummy_directory_1` is the target directory that the ransomware will encrypt. It's hard coded into the C++ code, so if you want to change the target directory's name or use the ransomware on a different folder, you'll have to change the code in this line: `std::string target_dir = "dummy_directory_1";`. Here's the different kinds of executable code vital for the simulation: </br>
 * `basic_ransomware.cpp` - A very simple piece of ransomware that showcases how ransomware works. It recursively visits all files in a directory and overwrites them with their encrypted data. 
 * `actual_ransomeware.cpp` - The closest I could get to legitimate, real-world ransomware behavior. It runs silently in the background without notifying the user, and when it's done, it leaves a ransom note and then deletes itself to make investigations harder.
 * `undo_ransom.cpp` - Your only way of effectively undoing the ransomware's actions. It uses the same encryption key and algorithm as the ransomwares, so if you change they keys in the ransomware, change it in this code too.
